@@ -25,3 +25,10 @@ You should get back an "ok" response:
 ```json
 {"status":"ok"}
 ```
+
+---
+
+## References
+
+- [Run your own OAuth2 Server](https://www.ory.sh/run-oauth2-server-open-source-api-security/#performing-the-oauth2-client-credentials-flow)
+- [ID Token and Access Token: What's the Difference?](https://auth0.com/blog/id-token-access-token-what-is-the-difference/)
