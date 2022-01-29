@@ -1,28 +1,28 @@
 <script>
 	import { Router, Route, Link } from "svelte-routing";
-	import Home from "./pages/Home.svelte";
+	import Login from "./pages/Login.svelte";
 	import About from "./pages/About.svelte";
 
-	export let name;
 	export let url = "";
 </script>
 
 <main>
 	<Router {url}>
 		<nav>
-			<Link to="/">Home</Link>
+			<Link to="/">Login</Link>
 			<Link to="about">About</Link>
 		</nav>
 		<div>
 			<Route path="about" component={About} />
-			<Route path="/"><Home {name} /></Route>
+			<Route path="/"><Login /></Route>
+			<Route path="/auth/callback" />
 		</div>
 	</Router>
 </main>
 
 <style>
 	main {
-		text-align: left;
+		text-align: center;
 		padding: 1em;
 		max-width: 240px;
 		margin: 0 auto;
