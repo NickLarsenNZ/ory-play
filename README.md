@@ -3,6 +3,10 @@
 Quite interested in the tools here: <https://github.com/ory>. \
 I'd like to try different authorization flows, and see how easy it is to add claims dynamically.
 
+## Warning
+
+This repo is for learning, and some statements might not be correct (and might be updated as I go on). Take it all with a grain of salt.
+
 ## Hydra
 
 > **Warning**: This configuration uses static secrets to make it quick to spin up and not distract from the learnings. If you plan to use this for anything sensitive, change the way the secrets are supplied.
