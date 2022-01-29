@@ -1,15 +1,28 @@
 <script>
+	import { Router, Route, Link } from "svelte-routing";
+	import Home from "./pages/Home.svelte";
+	import About from "./pages/About.svelte";
+
 	export let name;
+	export let url = "";
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<Router {url}>
+		<nav>
+			<Link to="/">Home</Link>
+			<Link to="about">About</Link>
+		</nav>
+		<div>
+			<Route path="about" component={About} />
+			<Route path="/"><Home {name} /></Route>
+		</div>
+	</Router>
 </main>
 
 <style>
 	main {
-		text-align: center;
+		text-align: left;
 		padding: 1em;
 		max-width: 240px;
 		margin: 0 auto;
