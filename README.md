@@ -108,6 +108,55 @@ Output:
 }
 ```
 
+### Authorization Code Flow
+
+In this flow, authentication (and consent) can be delegated through HTTP redirects, and the frontend app can send requests to the backend using the `authorization_code` (obtained from the redirect) which is then exchanged for an `access_token` by the backend web app for making requests to the API (Resource Server).
+
+This flow is suitable for Server-Side Web Applications, where the logic to interact with the API (Resource Server) is running in a private/controlled server which holds the `client_secret`. Frontend apps must **NOT** be configured with the `client-secret`, they can only use the `authorization_code` in requests made to the backend web app.
+
+This flow is configured with the grant type `authorization_code` (and `refresh_token` for when the `authorization_code` has an expiry?).
+
+[Sequence Diagram][authorization-code-flow]
+
+In this example, we'll be running a demo app to handle login and consent. You can think of this liek Google or Github authorization for other apps. See the `hydra_consent_demo` service and the `URLS_CONSENT` and `URLS_LOGIN` configured under the `hydra` service in [`docker-compose.yml`](./docker-compose.yml).
+
+The login and consent service in this case has static username and password: <https://github.com/ory/hydra-login-consent-node/blob/e59f0840e3771a7cdff5840d6c4cc7ea1981b1bc/src/routes/login.ts#L79-L91>
+
+#### Create a client
+
+```sh
+docker run --rm -it \
+  --network "$(basename $(pwd))_ory" \
+  oryd/hydra:v1.10.2 \
+  clients create \
+    --endpoint http://hydra:4445 \
+    --id "another-consumer" \
+    --secret "consumer-secret" \
+    -g "authorization_code,refresh_token" \
+    -r "token,code,id_token" \
+    --scope "openid,offline" \
+    --callbacks http://127.0.0.1:9010/callback # what will be running on 9010? Ahhh, next we'll run an app that will temporarily run on that port ;)
+```
+
+#### Mimic a web app that is to be secured
+
+This is basically the app you are trying to secure, and would display some button like "Login with _____". It will have access to the `client-id` and `client-secret` (from the previous step) among other less sensitive variables necessary for redirects and building the payload(s).
+
+```sh
+docker run --rm -it \
+  --network "$(basename $(pwd))_ory" \
+  -p 9010:9010 \
+  oryd/hydra:v1.10.2 \
+  token user \
+    --port 9010 \
+    --auth-url http://127.0.0.1:9000/oauth2/auth \
+    --token-url http://hydra:4444/oauth2/token \
+    --client-id "another-consumer" \
+    --client-secret "consumer-secret" \
+    --scope "openid,offline" \
+    --redirect "http://127.0.0.1:9010/callback"
+```
+
 ---
 
 ## References
@@ -116,3 +165,4 @@ Output:
 - [ID Token and Access Token: What's the Difference?](https://auth0.com/blog/id-token-access-token-what-is-the-difference/)
 
 [client-credentials-flow]: https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow#how-it-works
+[authorization-code-flow]: https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow#how-it-works
