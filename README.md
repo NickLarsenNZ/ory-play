@@ -168,6 +168,21 @@ docker run --rm -it \
     --redirect "http://127.0.0.1:9010/callback"
 ```
 
+#### Frontend app (without client-secret)
+
+> **Note**: the [docs][ory-pkce] don't mention grants, scopes, etc... So I left them out and will add back in if needed.
+
+```sh
+docker run --rm -it \
+  --network "$(basename $(pwd))_ory" \
+  oryd/hydra:v1.10.2 \
+  clients create \
+    --endpoint http://hydra:4445 \
+    --token-endpoint-auth-method none \
+    --id "my-spa" \
+    --callbacks http://127.0.0.1:8080/auth/callback # this is the sample SPA in this repo, details to come
+```
+
 ---
 
 ## References
@@ -175,7 +190,9 @@ docker run --rm -it \
 - [Run your own OAuth2 Server](https://www.ory.sh/run-oauth2-server-open-source-api-security/#performing-the-oauth2-client-credentials-flow)
 - [ID Token and Access Token: What's the Difference?](https://auth0.com/blog/id-token-access-token-what-is-the-difference/)
 - [Authorization Code Flow with PKCE for SPAs](https://curity.io/resources/learn/spa-best-practices/#using-the-code-flow-with-spas)
+- [Svelte App Routing](https://dev.to/lukocastillo/svelte-3-how-to-integrate-with-svelte-routing-4j3b)
 
 [client-credentials-flow]: https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow#how-it-works
 [authorization-code-flow]: https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow#how-it-works
 [authorization-code-flow-with-pkce]: https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow-with-proof-key-for-code-exchange-pkce#how-it-works
+[ory-pkce]: https://www.ory.sh/hydra/docs/guides/oauth2-public-spa-mobile

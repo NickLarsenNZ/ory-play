@@ -1,5 +1,5 @@
 <script>
-	import { Router, Route, Link } from "svelte-routing";
+	import { Router, Route, Link, link } from "svelte-routing";
 	import Login from "./pages/Login.svelte";
 	import About from "./pages/About.svelte";
 
@@ -15,7 +15,7 @@
 		<div>
 			<Route path="about" component={About} />
 			<Route path="/"><Login /></Route>
-			<Route path="/auth/callback" />
+			<Route path="/auth/callback" component={AuthCallback} />
 		</div>
 	</Router>
 </main>
@@ -28,7 +28,7 @@
 		margin: 0 auto;
 	}
 
-	h1 {
+	:global(h1) {
 		color: #ff3e00;
 		text-transform: uppercase;
 		font-size: 4em;
