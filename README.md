@@ -114,19 +114,26 @@ Output:
 
 ### Authorization Code Flow
 
-In this flow, authentication (and consent) can be delegated through HTTP redirects, and the frontend app can send requests to the backend using the `authorization_code` (obtained from the redirect) which is then exchanged for an `access_token` by the backend web app for making requests to the API (Resource Server).
+In this flow, authentication (and consent) can be delegated through HTTP redirects, and the application then exchange the `authorization_code` (obtained from the redirect) for an `access_token` to use in requests to the API (Resource Server).
 
-This flow is suitable for Server-Side Web Applications, where the logic to interact with the API (Resource Server) is running in a private/controlled server which holds the `client_secret`. Frontend apps must **NOT** be configured with the `client-secret`, they can only use the `authorization_code` in requests made to the backend web app.
+This flow is suitable for:
+- Backend (server-side) applications where the `client-secret` cans safely reside.
+  - [Sequence Diagram][authorization-code-flow]
+- Frontend (in browser, or native) applications such as SPAs, PWAs, Desktop Apps which can access the API (Resource Server) directly.
+  - [Sequence Diagram][authorization-code-flow-with-pkce]
+  - In this configuration, the application must not be configured with a `client-secret` since the application logic is publically accessible (even if compiled).
 
 This flow is configured with the grant type `authorization_code` (and `refresh_token` for when the `authorization_code` has an expiry?).
 
-[Sequence Diagram][authorization-code-flow]
+---
 
 In this example, we'll be running a demo app to handle login and consent. You can think of this liek Google or Github authorization for other apps. See the `hydra_consent_demo` service and the `URLS_CONSENT` and `URLS_LOGIN` configured under the `hydra` service in [`docker-compose.yml`](./docker-compose.yml).
 
 The login and consent service in this case has static username and password: <https://github.com/ory/hydra-login-consent-node/blob/e59f0840e3771a7cdff5840d6c4cc7ea1981b1bc/src/routes/login.ts#L79-L91>
 
-#### Create a client
+#### Backend app (with client-secret)
+
+##### Create a client
 
 ```sh
 docker run --rm -it \
@@ -142,7 +149,7 @@ docker run --rm -it \
     --callbacks http://127.0.0.1:9010/callback # what will be running on 9010? Ahhh, next we'll run an app that will temporarily run on that port ;)
 ```
 
-#### Mimic a web app that is to be secured
+##### Mimic a server-side web app that is to be secured
 
 This is basically the app you are trying to secure, and would display some button like "Login with _____". It will have access to the `client-id` and `client-secret` (from the previous step) among other less sensitive variables necessary for redirects and building the payload(s).
 
@@ -167,6 +174,8 @@ docker run --rm -it \
 
 - [Run your own OAuth2 Server](https://www.ory.sh/run-oauth2-server-open-source-api-security/#performing-the-oauth2-client-credentials-flow)
 - [ID Token and Access Token: What's the Difference?](https://auth0.com/blog/id-token-access-token-what-is-the-difference/)
+- [Authorization Code Flow with PKCE for SPAs](https://curity.io/resources/learn/spa-best-practices/#using-the-code-flow-with-spas)
 
 [client-credentials-flow]: https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow#how-it-works
 [authorization-code-flow]: https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow#how-it-works
+[authorization-code-flow-with-pkce]: https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow-with-proof-key-for-code-exchange-pkce#how-it-works
