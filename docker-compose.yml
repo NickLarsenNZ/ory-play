@@ -13,20 +13,38 @@ services:
     networks:
       - ory
 
-  hydra_migrate:
-    init: true
-    depends_on:
-      - postgres
+  # hydra_migrate:
+  #   init: true
+  #   depends_on:
+  #     - postgres
+  #   image: oryd/hydra:v1.10.2
+  #   environment:
+  #     - DSN=postgres://hydra:secret@postgres:5432/hydra?sslmode=disable
+  #   command:
+  #     - migrate
+  #     - sql
+  #     - --yes
+  #     - --read-from-env
+  #   networks:
+  #     - ory
+
+  hydra:
     image: oryd/hydra:v1.10.2
     environment:
       - DSN=postgres://hydra:secret@postgres:5432/hydra?sslmode=disable
+      - SECRETS_SYSTEM=1E922sIUu90WPjnW8bRrVBY6BcGMy4qP # export LC_CTYPE=C; cat /dev/urandom | gtr -dc 'a-zA-Z0-9' | gfold -w 32 | ghead -n 1
+      - URLS_SELF_ISSUER=http://127.0.0.1:9000/
+      - URLS_CONSENT=http://127.0.0.1:9020/consent
+      - URLS_LOGIN=http://127.0.0.1:9020/login
     command:
-      - migrate
-      - sql
-      - --yes
-      - --read-from-env
+      - serve
+      - all
+      - --dangerous-force-http
     networks:
       - ory
+    ports:
+      - 9000:4444
+      - 9001:4445 # curl -s http://127.0.0.1:9001/health/ready -> {"status":"ok"}
 
 networks:
   ory:
