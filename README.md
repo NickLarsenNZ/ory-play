@@ -30,7 +30,18 @@ You should get back an "ok" response:
 
 ### Client Credentials Flow
 
-> Most of these docker commands need specify the network so the host header matches. Otherwise, you can use the exposed port, but will need a hosts entry such as `127.0.0.1 hydra`.
+In this flow, you provide login credentials, and are given an `access_token` with whcih to access the API (Resource Server) with.
+
+This flow is sometimes called Machine-to-Machine (M2M) and is suitable for the following types of apps:
+- CLIs
+- daemons
+- backend services
+
+This flow is configured with the grant type `client_credentials`.
+
+[Sequence Diagram][client-credentials-flow]
+
+> **Note**: Most of these docker commands need specify the network so the host header matches. Otherwise, you can use the exposed port, but will need a hosts entry such as `127.0.0.1 hydra`.
 
 #### Create a client
 
@@ -103,3 +114,5 @@ Output:
 
 - [Run your own OAuth2 Server](https://www.ory.sh/run-oauth2-server-open-source-api-security/#performing-the-oauth2-client-credentials-flow)
 - [ID Token and Access Token: What's the Difference?](https://auth0.com/blog/id-token-access-token-what-is-the-difference/)
+
+[client-credentials-flow]: https://auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow#how-it-works
